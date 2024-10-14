@@ -15,4 +15,4 @@ Welcome to my projects which I am proud of now.
 
 # Twitter-Clone
 
-[Twitter-Clone](https://github.com/murashkin-dv/Portfolio/tree/main/telegram-bot-motorcycle-technical-data)
+[Twitter-Clone](https://github.com/murashkin-dv/Portfolio/tree/main/twitter-clone)
