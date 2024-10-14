@@ -1,5 +1,7 @@
 # Twitter-Clone
 
+### NOTE! The project will be updated shortly.
+
 ![demo](https://github.com/user-attachments/assets/9babf78a-ddd5-4194-9dbb-45afbe1e2fdb)
 
 This project implements back-end service for microblog clone of Twitter social
