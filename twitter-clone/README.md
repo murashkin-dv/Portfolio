@@ -1,6 +1,6 @@
 # Twitter-Clone
 
-### NOTE! The project will be updated shortly.
+### 🚧 NOTE! The project will be uploaded shortly.
 
 ![demo](https://github.com/user-attachments/assets/9babf78a-ddd5-4194-9dbb-45afbe1e2fdb)
 
