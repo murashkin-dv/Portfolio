@@ -77,7 +77,7 @@ A list of dependencies: [Get Dependencies](./project/server/requirements.txt)
 
 If you have questions or any difficulties with running this project create
 [Discussion](https://github.com/) in current repository or email
-to <test@test.ru>.
+to <murashkin.dv@gmail.com>.
 
 ## Special Thanks To
 
