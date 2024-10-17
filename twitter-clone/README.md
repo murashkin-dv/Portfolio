@@ -61,8 +61,7 @@ Run these steps in command line if you want to reset the database completely:
 
 ## Manual
 
-Endpoint's
-documentation: [Get Endpoints Description](http://localhost:8080/docs) <br>
+Endpoint's documentation (while application is running): [Get Endpoints Description](http://localhost:8080/docs) <br>
 Program Releases: [Get Release Description](./TBD)
 
 <!-- Dependencies -->
