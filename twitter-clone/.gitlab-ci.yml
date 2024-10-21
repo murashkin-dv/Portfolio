@@ -1,0 +1,48 @@
+workflow:
+  rules:
+    # switch from branch pipelines to merge request pipelines when a merge request is created.
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"
+      when: never
+    # - A merge request pipeline, start the pipeline. For example, a merge request pipeline can be triggered by a push to a branch with an associated open merge request.
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # - A branch pipeline, but a merge request is open for that branch, do not run the branch pipeline. For example, a branch pipeline can be triggered by a change to a branch, an API call, a scheduled pipeline, and so on.
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    # - A branch pipeline, but there is no merge request open for the branch, run the branch pipeline.
+    - if: $CI_COMMIT_BRANCH
+
+image: python:3.10
+
+stages:
+  - build
+  - test
+
+before_script:
+  - pip install --upgrade pip
+  - pip install -r requirements_linters.txt
+  # - mypy --install-types
+
+pytest:
+  stage: test
+  script:
+    - pytest ./project/tests
+
+mypy:
+  stage: test
+  script:
+    - mypy --install-types --non-interactive --check-untyped-defs ./project
+
+black:
+  stage: test
+  script:
+    - black --diff --check ./project
+
+isort:
+  stage: test
+  script:
+    - isort --check-only ./project
+
+flake8:
+  stage: test
+  script:
+    - flake8 --config=.flake8 ./project
