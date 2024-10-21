@@ -1,6 +1,6 @@
 # Twitter-Clone
 
-### 🚧 NOTE! The project will be uploaded shortly.
+### 🚧 NOTE! Tests are coming.
 
 This project implements back-end service for microblog clone of Twitter social
 network.
