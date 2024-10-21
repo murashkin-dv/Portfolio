@@ -2,26 +2,15 @@ services:
   fastapi:
     build: ./project/server
     container_name: fastapi_app
-    # Uvicorn - ASGI server
-    # Since Unicorn is an application server, it will not serve up static files.
-#    command: uvicorn main.app:create_app --host 0.0.0.0 --port 5000 --reload --factory --uds /run/uvicorn.sock
-    # Remove volumes from production?
     volumes:
       - api_data:/usr/src/app
       - static_data:/usr/src/app/static/
       - socket_data:/run
-    # port 5000 is only exposed internally, to other Docker services.
-    # The port will no longer be published to the host machine.
     ports:
       - 8000:5000
     restart: on-failure
     env_file:
       - .env.dev
-#    environment:
-#      - ENVIRONMENT=dev
-#      - TESTING=False
-#      - DATABASE_URL=postgresql+asyncpg://admin:admin@database:5432/tweet_clone_db
-#      - TEST_DATABASE_URL=postgresql+asyncpg://admin:admin@database:5432/test_tweet_clone_db
     networks:
       - fastapi-network
       - db-network
@@ -33,17 +22,10 @@ services:
     image: postgres:13
     container_name: postgres
     command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr", "-c", "logging_collector=on", "-c", "log_directory=my_logs" ]
-    #  To find log file:
-    # https://betterstack.com/community/guides/logging/how-to-start-logging-with-postgresql/
     volumes:
-#      - ./init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
       - postgres_volume:/var/lib/postgresql/data/
     env_file:
       - .env.dev
-#    environment:
-#      - POSTGRES_USER=admin
-#      - POSTGRES_PASSWORD=admin
-#      - POSTGRES_DB=tweet_clone_db
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d postgres -U admin" ]
       interval: 30s
@@ -62,14 +44,9 @@ services:
     #  To find log file:
     # https://betterstack.com/community/guides/logging/how-to-start-logging-with-postgresql/
     volumes:
-#      - ./init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
       - postgres_volume_test:/var/lib/postgresql/data/
     env_file:
       - .env.test
-#    environment:
-#      - POSTGRES_USER=admin
-#      - POSTGRES_PASSWORD=admin
-#      - POSTGRES_DB=tweet_clone_db
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d postgres-test -U admin" ]
       interval: 30s
