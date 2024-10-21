@@ -280,32 +280,6 @@ class User(Base):
                 )
 
                 user_following_by = user_following_by_query.all()
-
-                # Alternative method 2 to get relationships:
-                # user_follows_to = [
-                #     {"id": i_user.following_id, "name": i_user.following_user.name}
-                #     for i_user in user.following_to
-                # ]
-                #
-                # user_following_by = [
-                #     {"id": i_user.follower_id, "name": i_user.follower_user.name}
-                #     for i_user in user.following_by.distinct_target_key
-                # ]
-
-                # Alternative method 3 to get relationships:
-                # duplicate_id = list()
-                #
-                # user_follows_to = list()
-                # for i_user in user.following_to:
-                #     if i_user.following_id not in duplicate_id:
-                #         user_follows_to.append(
-                #             {"id": i_user.following_id, "name":
-                #             i_user.following_user.name}
-                #         )
-                #         duplicate_id.append(i_user.following_id)
-                # duplicate_id.clear()
-                #
-
                 user_data = user.to_json()
                 user_data["followers"] = [
                     i_user_following_by._asdict()
