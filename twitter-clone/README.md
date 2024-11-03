@@ -81,5 +81,4 @@ to <murashkin.dv@gmail.com>.
 
 ## Special Thanks To
 
-***SkillBox Team*** who helped me to create this masterpiece back-end for my
-first time ever! :)
+***SkillBox Team*** who helped me to create this masterpiece :)
