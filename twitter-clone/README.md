@@ -58,7 +58,7 @@ the server  shutdown or restarted by any reason.
 Run these steps in command line if you want to reset the database completely:
 
     1. docker-compose down -v --rmi all (+ docker system prune -a)
-    2. Run a desired configuration in command line (see item 3 above)
+    2. Run a desired configuration in command line (see item 5 above)
 
 <!-- User Manual -->
 
