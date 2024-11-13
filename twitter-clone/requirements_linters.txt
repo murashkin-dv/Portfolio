@@ -1,0 +1,16 @@
+black
+flake8
+flake8-bugbear
+flake8-pie
+isort
+mypy
+# flask
+SQLAlchemy
+factory-boy
+# flask-sqlalchemy
+pytest
+fastapi
+aiofiles
+types-aiofiles
+pydantic
+pydantic-settings
