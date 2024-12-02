@@ -23,8 +23,7 @@ To run the code:
      - Copy bot token and paste it into BOT_TOKEN variable in ".env"
    
     
-     --> RAPID_API_KEY = "adae39ec6amsh2a93eae09a7f15dp146c0ajsn2018037eba54"
-        "Your key issued by API from
+     --> RAPID_API_KEY = "Your key issued by API from
         https://rapidapi.com/apininjas/api/motorcycles-by-api-ninjas"
      - Log in to https://rapidapi.com
      - Open https://rapidapi.com/apininjas/api/motorcycles-by-api-ninjas
