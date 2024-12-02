@@ -16,16 +16,14 @@ To run the code:
 2. fill ".env" with data. Refer to ".env.template" file in root folder.
 
     
-    --> BOT_TOKEN =  "adae39ec6amsh2a93eae09a7f15dp146c0ajsn2018037eba54"
-        "Your token for bot issued by @BotFather"
+    --> BOT_TOKEN = "Your token for bot issued by @BotFather"
      - Go to @BotFather
      - Send Command /token
      - Send @moto_techdata_bot 
      - Copy bot token and paste it into BOT_TOKEN variable in ".env"
    
     
-     --> RAPID_API_KEY =
-        "adae39ec6amsh2a93eae09a7f15dp146c0ajsn2018037eba54"
+     --> RAPID_API_KEY = "adae39ec6amsh2a93eae09a7f15dp146c0ajsn2018037eba54"
         "Your key issued by API from
         https://rapidapi.com/apininjas/api/motorcycles-by-api-ninjas"
      - Log in to https://rapidapi.com
