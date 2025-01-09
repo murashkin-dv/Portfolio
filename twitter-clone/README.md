@@ -5,7 +5,7 @@ network.
 
 How does it work? ⤵
 
-![demo](/readme_support/demo.gif)
+![demo](readme_support/demo.gif)
 
 ***
 
