@@ -83,6 +83,3 @@ async def test_get_user_by_id_negative(
     user_id = 10
     with pytest.raises(ObjectNotFoundException):
         await User.get_user_by_id(async_db, user_id)
-
-    # user_query = await async_db.execute(select(User).where(User.id == user_id))
-    # user = user_query.fetchone()[0]
