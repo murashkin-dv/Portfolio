@@ -189,8 +189,6 @@ async def create_like(
     new_like = await Like.create_like(_session, user_api_key, tweet_id)
     if new_like:
         logger.info("Create like.. Success!")
-    else:
-        logger.info("Create like.. Fail! Like personal tweets is not allowed")
     return {"result": new_like}
 
 

@@ -30,6 +30,7 @@ from sqlalchemy.orm import DeclarativeBase, relationship
 from .config import Settings, get_settings
 from .error_handler import AppException, ObjectNotFoundException, SQLAlchemyException
 
+
 # Initialize logging
 logger_db = logging.getLogger("logger_db")
 logging.basicConfig(level=logging.DEBUG)
@@ -71,7 +72,6 @@ async def insert_data(
     ]
 
     tweets_total = 12  # 3 per user
-    # users_total = 4
 
     for i in range(len(users)):
         users[i].tweets_of_user.extend(
@@ -117,8 +117,6 @@ async def insert_data(
                     FollowRelation(
                         follower_id=i + 1,
                         following_id=2,
-                        # following_id=random.choice(
-                        #     list(set(range(1, len(users) + 1)) - {i + 1}),
                     ),
                     FollowRelation(follower_id=i + 1, following_id=3),
                     FollowRelation(follower_id=i + 1, following_id=4),
@@ -130,8 +128,6 @@ async def insert_data(
                     FollowRelation(
                         follower_id=i + 1,
                         following_id=1,
-                        # following_id=random.choice(
-                        #     list(set(range(1, len(users) + 1)) - {i + 1}),
                     ),
                     FollowRelation(follower_id=i + 1, following_id=3),
                 ]
@@ -142,8 +138,6 @@ async def insert_data(
                     FollowRelation(
                         follower_id=i + 1,
                         following_id=1,
-                        # following_id=random.choice(
-                        #     list(set(range(1, len(users) + 1)) - {i + 1}),
                     ),
                     FollowRelation(follower_id=i + 1, following_id=3),
                 ]
@@ -164,6 +158,7 @@ async def files_clean_up(_path: str) -> None:
     """
     try:
         os.remove(_path)
+        logger_db.info("!!! Related media clean up complete!")
     except FileNotFoundError as exc:
         logger_db.error("!!! File not found when deleting!", exc)
         raise ObjectNotFoundException(error_message="File not found when deleting")
@@ -288,31 +283,6 @@ class User(Base):
 
             user_following_by = user_following_by_query.all()
 
-            # Alternative method 2 to get relationships:
-            # user_follows_to = [
-            #     {"id": i_user.following_id, "name": i_user.following_user.name}
-            #     for i_user in user.following_to
-            # ]
-            #
-            # user_following_by = [
-            #     {"id": i_user.follower_id, "name": i_user.follower_user.name}
-            #     for i_user in user.following_by.distinct_target_key
-            # ]
-
-            # Alternative method 3 to get relationships:
-            # duplicate_id = list()
-            #
-            # user_follows_to = list()
-            # for i_user in user.following_to:
-            #     if i_user.following_id not in duplicate_id:
-            #         user_follows_to.append(
-            #             {"id": i_user.following_id, "name":
-            #             i_user.following_user.name}
-            #         )
-            #         duplicate_id.append(i_user.following_id)
-            # duplicate_id.clear()
-            #
-
             user_data = user.to_json()
             user_data["followers"] = [
                 i_user_following_by._asdict()
@@ -336,8 +306,8 @@ class User(Base):
 
     def to_json(self) -> Dict[str, Any]:
         return {
-            c.name: getattr(self, c.name) for c in self.__table__.columns
-        }  # type:ignore
+            c.name: getattr(self, c.name) for c in self.__table__.columns  # type:ignore
+        }
 
 
 class Tweet(Base):
@@ -413,10 +383,6 @@ class Tweet(Base):
                 )
             )
             likes = likes_query.all()
-            # get attachments: alternative option - get all attachments at once but not
-            # in loop like further in code
-            # attachments_query = await _session.execute(select(Media.host_path))
-            # attachments = attachments_query.all()
 
             # compile result
             tweet_data = [i_tweet[0].to_json() for i_tweet in tweets]
@@ -526,8 +492,8 @@ class Tweet(Base):
 
     def to_json(self) -> Dict[str, Any]:
         return {
-            c.name: getattr(self, c.name) for c in self.__table__.columns
-        }  # type:ignore
+            c.name: getattr(self, c.name) for c in self.__table__.columns  # type:ignore
+        }
 
 
 class FollowRelation(Base):
@@ -563,6 +529,15 @@ class FollowRelation(Base):
         cls, _session: AsyncSession, api_key: str, user_id: int
     ) -> Any:
         user = await User.get_current_user(_session, api_key)
+
+        user_requested = await _session.get(User, user_id)
+        if user_requested is None:
+            raise ObjectNotFoundException(error_message="User not found.")
+
+        if user.id == user_id:
+            logger_db.info("!!! You can't follow yourself!")
+            return False
+
         new_follow = FollowRelation(
             follower_id=user.id,
             following_id=user_id,
@@ -609,8 +584,8 @@ class FollowRelation(Base):
 
     def to_json(self) -> Dict[str, Any]:
         return {
-            c.name: getattr(self, c.name) for c in self.__table__.columns
-        }  # type:ignore
+            c.name: getattr(self, c.name) for c in self.__table__.columns  # type:ignore
+        }
 
 
 class Like(Base):
@@ -636,18 +611,41 @@ class Like(Base):
     ) -> Any:
         user = await User.get_current_user(_session, api_key)
         try:
-            # check whether tweet owner is current user
-            tweet_is_mine_query = await _session.execute(
-                select(Tweet.author).filter(
-                    and_(Tweet.id == tweet_id, Tweet.author == user.id)
-                )
+            # check whether tweet exists
+            tweet_exist_query = await _session.execute(
+                select(Tweet.id).filter(Tweet.id == tweet_id)
             )
 
-            tweet_is_mine = tweet_is_mine_query.one_or_none()
+            tweet_exist = tweet_exist_query.one_or_none()
+            if tweet_exist:
+                # check whether tweet owner is current user
+                tweet_is_mine_query = await _session.execute(
+                    select(Tweet.author).filter(
+                        and_(Tweet.id == tweet_id, Tweet.author == user.id)
+                    )
+                )
+                tweet_is_mine = tweet_is_mine_query.one_or_none()
 
-            if tweet_is_mine:
-                return False
-            else:
+                if tweet_is_mine:
+                    logger_db.info(
+                        "Create like.. Fail! Like personal tweets is not allowed"
+                    )
+                    return False
+
+                # check whether like by current user exists
+                like_exist_query = await _session.execute(
+                    select(Like.id).filter(
+                        and_(Like.tweet_id == tweet_id, Like.follower_id == user.id)
+                    )
+                )
+                like_exist = like_exist_query.one_or_none()
+
+                if like_exist:
+                    logger_db.info(
+                        "Create like.. Like already exists! No record created"
+                    )
+                    return False
+
                 new_like = Like(
                     tweet_id=tweet_id,
                     follower_id=user.id,
@@ -655,6 +653,9 @@ class Like(Base):
                 _session.add(new_like)
                 await _session.commit()
                 return True
+
+            else:
+                raise ObjectNotFoundException(error_message="Tweet not found")
 
         except SQLAlchemyError as exc:
             logger_db.error("SQLAlchemy Error!..")
@@ -690,8 +691,8 @@ class Like(Base):
 
     def to_json(self) -> Dict[str, Any]:
         return {
-            c.name: getattr(self, c.name) for c in self.__table__.columns
-        }  # type:ignore
+            c.name: getattr(self, c.name) for c in self.__table__.columns  # type:ignore
+        }
 
 
 class Media(Base):
@@ -732,7 +733,6 @@ class Media(Base):
         media_path_local: pathlib.Path,
         file: UploadFile,
     ) -> int:
-        # user = await User.get_current_user(_session, api_key)
         destination_local = pathlib.Path("")
         media_data = dict()
         try:

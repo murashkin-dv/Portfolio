@@ -4,8 +4,6 @@ import pathlib
 from functools import lru_cache
 
 from dotenv import load_dotenv
-from pydantic import AnyUrl
-from pydantic_core import Url
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logger = logging.getLogger("uvicorn")
